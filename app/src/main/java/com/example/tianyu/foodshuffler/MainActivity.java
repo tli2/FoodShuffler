@@ -43,6 +43,7 @@ public class MainActivity extends ActionBarActivity{
                 //Catch the null case in order to prevent application crash
                 if(location == null){
                     textView.setText("Null Location");
+                    return;
                 }
                 mFetchRestaurantsTask = (FetchRestaurantsTask) mFetchRestaurantsTask.execute(location);
                 try {
