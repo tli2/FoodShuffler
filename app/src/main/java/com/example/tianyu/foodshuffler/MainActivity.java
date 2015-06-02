@@ -1,6 +1,8 @@
 package com.example.tianyu.foodshuffler;
 
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +20,23 @@ import java.util.Random;
 
 public class MainActivity extends ActionBarActivity{
 
+    private Location location;
     private TextView textView;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    //Helper function to get a location fix. writes to the class variable location
+    private void getLocationFix(){
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationHolder locationHolder = new LocationHolder();
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationHolder);
+        //loops until fix
+        while(true){
+            if(locationHolder.isLocationAvailable())
+                break;
+        }
+        //assert that the locationHolder returns a location that is not null
+        location = locationHolder.getCurrentLocation();
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         //This simple UI consists of a TextView for displaying results or error messages and a button to initiate shuffle action
@@ -27,24 +44,23 @@ public class MainActivity extends ActionBarActivity{
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.textView);
 
-        //Constructs a getLocationTask object and stores the current location
-        getLocationTask mGetLocationTask = new getLocationTask(getApplicationContext());
-        mGetLocationTask.findBestLocation();
-        final Location location = mGetLocationTask.getLocation();
-
-
-        //Programs the button to perform shuffle action
+        //Programs the shuffle button to perform shuffle action
         Button shuffleAction = (Button) findViewById(R.id.shuffle_action);
         shuffleAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("Locating...Please Wait");
+                Log.d(LOG_TAG,"textView Updated");
+                getLocationFix();
                 //constructs a FetchRestaurantsTask instance and executes, gets back a JSON string
                 FetchRestaurantsTask mFetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext());
+
                 //Catch the null case in order to prevent application crash
                 if(location == null){
                     textView.setText("Null Location");
                     return;
                 }
+                textView.setText("Shuffling...Please Wait");
                 mFetchRestaurantsTask = (FetchRestaurantsTask) mFetchRestaurantsTask.execute(location);
                 try {
                     //Attempts to shuffle and construct a restaurant object out of the data retrieved
@@ -61,6 +77,7 @@ public class MainActivity extends ActionBarActivity{
             }
 
         });
+
     }
 
 

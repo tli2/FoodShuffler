@@ -1,0 +1,30 @@
+
+06/02/2015
+To-Do:
+
+1.Get location working.
+
+Current solution makes use of the LocationManager class. The code passes in a LocationHolder object implementing LocationListener.
+We then call the requestLocationUpdates() method to request a location update. Upon update the LocationHolder would receive a call 
+back from the LocationManager and updates its status and data. Once we see that the location is available in LocationHolder, we can call
+getCurrentLocation() to read the location. 
+
+However, currently the fix is very slow. Generally, we should call LocationManager.getLastKnownLocation() in order to receive a faster, yet probably 
+inaccurate result. However, since this method reads from the cache, and the emulator launches with the cache empty, it does not work on an emulator. 
+Maybe we can test it on a real device for better results?
+
+To set a location for the emulator, type in terminal:
+
+telnet localhost 5554
+
+geo fix (latitude) (longitude)
+
+
+It is necessary that we use mock data since the Yelp API we are using does not provide service in China. 
+Another solution that maybe better for getting the location is to use the Google Play API, but again it is not a very good idea for use within China.
+
+After we've got the skeleton up and running we should work on preference settings, so we can start weighing the data in order to provide more personalized options.
+
+2.Register to use the Yelp API
+
+Somehow we need to register in order to use the API. Haven't done it due to bad Internet. Should do it as soon as possible so we can get things working
