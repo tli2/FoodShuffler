@@ -32,10 +32,6 @@ public class MainActivity extends ActionBarActivity{
         mGetLocationTask.findBestLocation();
         final Location location = mGetLocationTask.getLocation();
 
-        //Catch the null case in order to prevent application crash
-        if(location == null){
-            textView.setText("Null Location");
-        }
 
         //Programs the button to perform shuffle action
         Button shuffleAction = (Button) findViewById(R.id.shuffle_action);
@@ -44,6 +40,10 @@ public class MainActivity extends ActionBarActivity{
             public void onClick(View v) {
                 //constructs a FetchRestaurantsTask instance and executes, gets back a JSON string
                 FetchRestaurantsTask mFetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext());
+                //Catch the null case in order to prevent application crash
+                if(location == null){
+                    textView.setText("Null Location");
+                }
                 mFetchRestaurantsTask = (FetchRestaurantsTask) mFetchRestaurantsTask.execute(location);
                 try {
                     //Attempts to shuffle and construct a restaurant object out of the data retrieved
