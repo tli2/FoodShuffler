@@ -2,20 +2,13 @@ package com.example.tianyu.foodshuffler;
 
 import android.content.Context;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.Buffer;
 import java.util.Random;
 
 /**
@@ -23,46 +16,111 @@ import java.util.Random;
  */
 
 /* AsyncTask to query the Yelp server about nearby restaurants*/
-public class FetchRestaurantsTask extends AsyncTask<Location,Void, String> {
+public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
 
     private final Context mContext;
+    private final TextView mTextView;
+    private Location currentLocation;
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    public FetchRestaurantsTask(Context context){
+    // For Yelp API
+    private static final String CONSUMER_KEY = "u8W0S27Ife1UpZWRBCkYRw";
+    private static final String CONSUMER_SECRET = "ARQKZ0YrqkZIkYKQipuAz7WCIC8";
+    private static final String TOKEN = "lrCALM_TKCrOGdO5PnITGSAanxWKX4_3";
+    private static final String TOKEN_SECRET = "-SNGmxMWnz6RTsuFbtLWmEfq3DA";
+
+    public FetchRestaurantsTask(Context context, TextView textView) {
         mContext = context;
+        mTextView = textView;
+    }
+
+    private void getLocation(){
+        Log.d(LOG_TAG, "Getting Location...");
+
+        MyLocation myLocation = new MyLocation(mContext);
+        if (myLocation.locationAvailable()) {
+            currentLocation = myLocation.getmLocation();
+            Log.d(LOG_TAG,"Location has been received.");
+            Log.d(LOG_TAG,"Final Latitude: " + currentLocation.getLatitude());
+            Log.d(LOG_TAG,"Final Longitude: " + currentLocation.getLongitude());
+            myLocation.stopUsingLocation();
+        }
+    }
+
+    private String getLocationDataFromJSON(String locationDataJSON) {
+        try {
+            //Attempts to shuffle and construct a restaurant object out of the data retrieved
+            Log.d(LOG_TAG,"Begin parsing resultString");
+            JSONObject fetchResult = new JSONObject(locationDataJSON);
+            JSONArray businesses = fetchResult.getJSONArray("businesses");
+            int index = (new Random()).nextInt(businesses.length());
+            restaurant result = new restaurant(businesses,index);
+            Log.d(LOG_TAG,"Done parsing resultString");
+            return result.description;
+        } catch (Exception e) {
+            Log.d(LOG_TAG,locationDataJSON);
+            return "Failed to Parse Result";
+        }
+    }
+
+    @Override
+    protected void onPreExecute() {
+        Log.d(LOG_TAG, "PreExecute");
+        getLocation();
     }
 
     @Override
     protected String doInBackground(Location... params) {
-        if (params.length == 0){
-            return null;
-        }
-        Location currentLocation = params[0];
-        try{
-            double coord_lat = currentLocation.getLatitude();
-            double coord_long = currentLocation.getLongitude();
-            Uri.Builder queryBuilder = Uri.parse("http://api.yelp.com/v2/search?term=food").buildUpon();
-            queryBuilder.appendQueryParameter("ll",Double.toString(coord_lat) + "," + Double.toString(coord_long));
-            URL queryUrl = new URL(queryBuilder.build().toString());
-
-            HttpURLConnection urlConnection = (HttpURLConnection) queryUrl.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-            if (inputStream == null) {
-                return null;
-            }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
-            }
-            return reader.toString();
-        }catch(IOException e){
-            return null;
+        Log.d(LOG_TAG, "starting to fetch data in background");
+        //Catch the null case in order to prevent application crash
+        if(currentLocation == null){
+            return "Null location";
         }
 
+        YelpAPI yelpRequest = new YelpAPI(CONSUMER_KEY,CONSUMER_SECRET,TOKEN,TOKEN_SECRET);
+
+        String resultJSON = yelpRequest.searchForBusinessesByCoordinates
+                ("food",currentLocation.getLatitude(),currentLocation.getLongitude());
+
+        return getLocationDataFromJSON(resultJSON);
+
+//        HttpURLConnection urlConnection = null;
+//
+//        try{
+//            double coord_lat = currentLocation.getLatitude();
+//            double coord_long = currentLocation.getLongitude();
+//            Uri.Builder queryBuilder = Uri.parse("http://api.yelp.com/v2/search?term=food").buildUpon();
+//            queryBuilder.appendQueryParameter("ll",Double.toString(coord_lat) + "," + Double.toString(coord_long));
+//            URL queryUrl = new URL(queryBuilder.build().toString());
+//
+//            urlConnection = (HttpURLConnection) queryUrl.openConnection();
+//            urlConnection.setRequestMethod("GET");
+//            urlConnection.connect();
+//
+//            InputStream inputStream = urlConnection.getInputStream();
+//            StringBuffer buffer = new StringBuffer();
+//            if (inputStream == null) {
+//                return null;
+//            }
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+//
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                buffer.append(line + "\n");
+//            }
+//            return getLocationDataFromJSON(reader.toString());
+//        }catch(IOException e){
+//            return null;
+//        }finally {
+//            if (urlConnection != null) {
+//                urlConnection.disconnect();
+//            }
+//        }
+
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        mTextView.setText(result);
     }
 }
