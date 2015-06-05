@@ -9,9 +9,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * Created by Billy on 6/2/2015.
+ * Created by Tianyu on 6/5/2015.
  */
-public class MyLocation implements LocationListener {
+public class LocationHolder implements LocationListener {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -21,86 +21,71 @@ public class MyLocation implements LocationListener {
     private boolean networkEnabled = false;
     private boolean locationAvailable = false;
 
-    private double latitude;
-    private double longitude;
     private Location mLocation;
 
     private LocationManager locationManager;
 
     // minimum distance change for updates
-    private int MIN_TIME = 1000;
+    private int MIN_TIME = 10;
     // minimum time between mLocation updates
-    private int MIN_DIST = 10;
+    private int MIN_DIST = 1000;
 
-    public MyLocation(Context newContext) {
+    public LocationHolder(Context newContext) {
         Log.d(LOG_TAG,"New MyLocation instance created");
         context = newContext;
-        getmLocation();
+        //Obtain a reference to locationManager under the current context. Assert that locationManager is not null
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        //attempts to fix current location
+        fixLocation();
     }
 
-    public Location getmLocation() {
+    public void fixLocation() {
         try {
-            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
             gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
+            //If neither gps or network can be used the shuffle action should not be initiated
             if (!gpsEnabled && !networkEnabled) {
                 Log.d(LOG_TAG,"No Location Service Available");
+                Toast.makeText(context, "Unable to obtain Location, please enable Locations", Toast.LENGTH_LONG).show();
                 locationAvailable = false;
             } else {
-                // now check which provider is available, gps is favored over network location
-
+                // now check which provider is available, gps is favored over network location.
+                // we initiate a request and then attempts to read approximated location from the stored location data.
+                // Here we are assuming that the last known location is somewhat accurate
                 if (gpsEnabled) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DIST, this);
-
-                    if (locationManager != null) {
-                        locationAvailable = true;
-                        mLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    }
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_DIST, MIN_TIME, this);
+                    mLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                }else if (networkEnabled) {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,MIN_DIST,MIN_TIME,this);
+                    locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 }
+                locationAvailable = true;
 
-                else if (networkEnabled) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,MIN_TIME,MIN_DIST,this);
-
-                    if (locationManager != null) {
-                        locationAvailable = true;
-                        mLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    }
-                }
-
+                //if mLocation is null, then we do not have a good approximation of the current location, and must wait for the real-time update
                 if (mLocation == null){
                     locationAvailable = false;
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return mLocation;
     }
 
     public void stopUsingLocation() {
-        if (locationManager != null) {
-            locationManager.removeUpdates(this);
-        }
+        locationManager.removeUpdates(this);
+    }
+
+    public Location getmLocation(){
+        return mLocation;
     }
 
     public double getLatitude() {
-        if (mLocation != null) {
-            latitude = mLocation.getLatitude();
-        }
-
-        return latitude;
+        return mLocation.getLatitude();
     }
 
     public double getLongitude() {
-        if (mLocation != null) {
-            longitude = mLocation.getLongitude();
-        }
-
-        return longitude;
+        return mLocation.getLongitude();
     }
 
     public boolean isLocationAvailable() {
@@ -108,10 +93,11 @@ public class MyLocation implements LocationListener {
     }
 
     @Override
+    //When this method receives a call back the device have obtained a recent fix on location,
+    //current location is clearly available and would be updated.
     public void onLocationChanged(Location location) {
+        locationAvailable = true;
         mLocation = location;
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
     }
 
     @Override
@@ -127,3 +113,4 @@ public class MyLocation implements LocationListener {
         Toast.makeText(context,"Location Provider Disabled: " + provider, Toast.LENGTH_LONG).show();
     }
 }
+

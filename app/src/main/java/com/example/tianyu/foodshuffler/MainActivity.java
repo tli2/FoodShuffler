@@ -18,8 +18,8 @@ public class MainActivity extends ActionBarActivity{
     protected void onCreate(Bundle savedInstanceState) {
         //This simple UI consists of a TextView for displaying results or error messages and a button to initiate shuffle action
         super.onCreate(savedInstanceState);
-        Log.d(LOG_TAG, "Main activity created");
         setContentView(R.layout.activity_main);
+        //Obtain a reference to the TextView
         textView = (TextView) findViewById(R.id.textView);
 
         //Programs the shuffle button to perform shuffle action
@@ -27,15 +27,9 @@ public class MainActivity extends ActionBarActivity{
         shuffleAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textView.setText("Locating...Please Wait");
-                Log.d(LOG_TAG,"textView Updating");
-
                 //constructs a FetchRestaurantsTask instance and executes, gets back a JSON string
                 FetchRestaurantsTask mFetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),textView);
-
-                textView.setText("Shuffling...Please Wait");
                 mFetchRestaurantsTask.execute();
-
             }
 
         });
