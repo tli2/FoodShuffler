@@ -28,9 +28,9 @@ public class MyLocation implements LocationListener {
     private LocationManager locationManager;
 
     // minimum distance change for updates
-    private int MIN_TIME = 10;
+    private int MIN_TIME = 1000;
     // minimum time between mLocation updates
-    private int MIN_DIST = 1000;
+    private int MIN_DIST = 10;
 
     public MyLocation(Context newContext) {
         Log.d(LOG_TAG,"New MyLocation instance created");
@@ -50,14 +50,6 @@ public class MyLocation implements LocationListener {
                 locationAvailable = false;
             } else {
                 // now check which provider is available, gps is favored over network location
-                if (networkEnabled) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,MIN_TIME,MIN_DIST,this);
-
-                    if (locationManager != null) {
-                        locationAvailable = true;
-                        mLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    }
-                }
 
                 if (gpsEnabled) {
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DIST, this);
@@ -67,6 +59,20 @@ public class MyLocation implements LocationListener {
                         mLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     }
                 }
+
+                else if (networkEnabled) {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,MIN_TIME,MIN_DIST,this);
+
+                    if (locationManager != null) {
+                        locationAvailable = true;
+                        mLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    }
+                }
+
+                if (mLocation == null){
+                    locationAvailable = false;
+                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,12 +103,13 @@ public class MyLocation implements LocationListener {
         return longitude;
     }
 
-    public boolean locationAvailable() {
+    public boolean isLocationAvailable() {
         return locationAvailable;
     }
 
     @Override
     public void onLocationChanged(Location location) {
+        mLocation = location;
         latitude = location.getLatitude();
         longitude = location.getLongitude();
     }

@@ -38,13 +38,14 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
         Log.d(LOG_TAG, "Getting Location...");
 
         MyLocation myLocation = new MyLocation(mContext);
-        if (myLocation.locationAvailable()) {
+        if (myLocation.isLocationAvailable()) {
             currentLocation = myLocation.getmLocation();
             Log.d(LOG_TAG,"Location has been received.");
             Log.d(LOG_TAG,"Final Latitude: " + currentLocation.getLatitude());
             Log.d(LOG_TAG,"Final Longitude: " + currentLocation.getLongitude());
             myLocation.stopUsingLocation();
         }
+
     }
 
     private String getLocationDataFromJSON(String locationDataJSON) {
@@ -68,9 +69,8 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
         Log.d(LOG_TAG, "PreExecute");
         getLocation();
     }
-
-    @Override
-    protected String doInBackground(Location... params) {
+        @Override
+        protected String doInBackground(Location... params) {
         Log.d(LOG_TAG, "starting to fetch data in background");
         //Catch the null case in order to prevent application crash
         if(currentLocation == null){
@@ -83,39 +83,6 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
                 ("food",currentLocation.getLatitude(),currentLocation.getLongitude());
 
         return getLocationDataFromJSON(resultJSON);
-
-//        HttpURLConnection urlConnection = null;
-//
-//        try{
-//            double coord_lat = currentLocation.getLatitude();
-//            double coord_long = currentLocation.getLongitude();
-//            Uri.Builder queryBuilder = Uri.parse("http://api.yelp.com/v2/search?term=food").buildUpon();
-//            queryBuilder.appendQueryParameter("ll",Double.toString(coord_lat) + "," + Double.toString(coord_long));
-//            URL queryUrl = new URL(queryBuilder.build().toString());
-//
-//            urlConnection = (HttpURLConnection) queryUrl.openConnection();
-//            urlConnection.setRequestMethod("GET");
-//            urlConnection.connect();
-//
-//            InputStream inputStream = urlConnection.getInputStream();
-//            StringBuffer buffer = new StringBuffer();
-//            if (inputStream == null) {
-//                return null;
-//            }
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                buffer.append(line + "\n");
-//            }
-//            return getLocationDataFromJSON(reader.toString());
-//        }catch(IOException e){
-//            return null;
-//        }finally {
-//            if (urlConnection != null) {
-//                urlConnection.disconnect();
-//            }
-//        }
 
     }
 
