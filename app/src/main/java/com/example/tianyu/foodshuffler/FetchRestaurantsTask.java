@@ -5,7 +5,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +45,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
             Log.d(LOG_TAG,"Final Longitude: " + currentLocation.getLongitude());
             myLocation.stopUsingLocation();
         } else{
-            Toast.makeText(mContext, "Unable to get current location, please try again", Toast.LENGTH_LONG).show();
+            Log.d(LOG_TAG, "LocationHolder location unavailable");
         }
 
     }
@@ -68,13 +67,10 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
     }
 
     @Override
-    protected void onPreExecute() {
-        Log.d(LOG_TAG, "PreExecute");
-        getLocation();
-    }
-        @Override
     protected String doInBackground(Location... params) {
         Log.d(LOG_TAG, "starting to fetch data in background");
+        getLocation();
+
         //Catch the null case in order to prevent application crash
         if(currentLocation == null){
             return "Null location";
