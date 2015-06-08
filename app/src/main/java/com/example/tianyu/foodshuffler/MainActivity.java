@@ -9,16 +9,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
+import org.scribe.builder.api.GoogleApi;
+
+import static com.google.android.gms.common.api.GoogleApiClient.*;
+
 
 public class MainActivity extends ActionBarActivity{
 
     private TextView textView;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         //This simple UI consists of a TextView for displaying results or error messages and a button to initiate shuffle action
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Obtain a reference to the TextView
         textView = (TextView) findViewById(R.id.textView);
 
@@ -28,14 +37,12 @@ public class MainActivity extends ActionBarActivity{
             @Override
             public void onClick(View v) {
                 //constructs a FetchRestaurantsTask instance and executes, gets back a JSON string
-                FetchRestaurantsTask mFetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),textView);
+                FetchRestaurantsTask mFetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(), textView);
                 mFetchRestaurantsTask.execute();
             }
 
         });
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -83,4 +90,5 @@ public class MainActivity extends ActionBarActivity{
     protected void onDestroy() {
         super.onDestroy();
     }
+
 }

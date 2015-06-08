@@ -3,8 +3,12 @@ package com.example.tianyu.foodshuffler;
 import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +22,8 @@ import java.util.Random;
 /* AsyncTask to query the Yelp server about nearby restaurants*/
 public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
 
+
+
     private final Context mContext;
     private final TextView mTextView;
     private Location currentLocation;
@@ -29,24 +35,28 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
     private static final String TOKEN = "lrCALM_TKCrOGdO5PnITGSAanxWKX4_3";
     private static final String TOKEN_SECRET = "-SNGmxMWnz6RTsuFbtLWmEfq3DA";
 
+    //Constructor, requires that LocationProvider be one of the two constants provided
     public FetchRestaurantsTask(Context context, TextView textView) {
         mContext = context;
         mTextView = textView;
+
     }
 
-    private void getLocation(){
+    private void getLocation() {
         Log.d(LOG_TAG, "Getting Location...");
-
-        LocationHolder myLocation = new LocationHolder(mContext);
+        LocationHolder myLocation = new LocationHolder(mContext, LocationHolder.GOOGLE_LOCATIONS);
         if (myLocation.isLocationAvailable()) {
             currentLocation = myLocation.getmLocation();
-            Log.d(LOG_TAG,"Location has been received.");
-            Log.d(LOG_TAG,"Final Latitude: " + currentLocation.getLatitude());
-            Log.d(LOG_TAG,"Final Longitude: " + currentLocation.getLongitude());
-            myLocation.stopUsingLocation();
+        } else if (myLocation.isGoogleUnavailable()){
+            myLocation = new LocationHolder(mContext, LocationHolder.DEVICE_LOCATIONS);
+            if (myLocation.isLocationAvailable()) {
+                currentLocation = myLocation.getmLocation();
+            }
         } else{
-            Log.d(LOG_TAG, "LocationHolder location unavailable");
+            return;
         }
+
+
 
     }
 
@@ -90,4 +100,5 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
     protected void onPostExecute(String result) {
         mTextView.setText(result);
     }
+
 }
