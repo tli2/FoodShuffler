@@ -62,6 +62,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
             return result.description;
         } catch (Exception e) {
             Log.d(LOG_TAG,locationDataJSON);
+            Log.d(LOG_TAG,e.toString());
             return "Failed to Parse Result";
         }
     }
