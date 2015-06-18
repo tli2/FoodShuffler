@@ -20,12 +20,11 @@ import java.util.Random;
  */
 
 /* AsyncTask to query the Yelp server about nearby restaurants*/
-public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
+public class FetchRestaurantsTask extends AsyncTask<Location, String, restaurant> {
 
 
 
     private final Context mContext;
-    private final TextView mTextView;
     private Location currentLocation;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -35,32 +34,27 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
     private static final String TOKEN = "lrCALM_TKCrOGdO5PnITGSAanxWKX4_3";
     private static final String TOKEN_SECRET = "-SNGmxMWnz6RTsuFbtLWmEfq3DA";
 
+
+
+
     //Constructor, requires that LocationProvider be one of the two constants provided
-    public FetchRestaurantsTask(Context context, TextView textView) {
+    public FetchRestaurantsTask(Context context) {
         mContext = context;
-        mTextView = textView;
-
     }
 
-    private void getLocation() {
+    //Method returns true if successfully gotten location, false otherwise
+    private boolean getLocation(){
         Log.d(LOG_TAG, "Getting Location...");
-        LocationHolder myLocation = new LocationHolder(mContext, LocationHolder.GOOGLE_LOCATIONS);
-        if (myLocation.isLocationAvailable()) {
+        try {
+            LocationHolder myLocation = new LocationHolder(mContext);
             currentLocation = myLocation.getmLocation();
-        } else if (myLocation.isGoogleUnavailable()){
-            myLocation = new LocationHolder(mContext, LocationHolder.DEVICE_LOCATIONS);
-            if (myLocation.isLocationAvailable()) {
-                currentLocation = myLocation.getmLocation();
-            }
-        } else{
-            return;
+            return true;
+        } catch(Exception e){
+            return false;
         }
-
-
-
     }
 
-    private String getLocationDataFromJSON(String locationDataJSON) {
+    private restaurant getDataFromJSON(String locationDataJSON) {
         try {
             //Attempts to shuffle and construct a restaurant object out of the data retrieved
             Log.d(LOG_TAG,"Begin parsing resultString");
@@ -69,36 +63,26 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, String> {
             int index = (new Random()).nextInt(businesses.length());
             restaurant result = new restaurant(businesses,index);
             Log.d(LOG_TAG,"Done parsing resultString");
-            return result.description;
+            return result;
         } catch (Exception e) {
             Log.d(LOG_TAG,locationDataJSON);
             Log.d(LOG_TAG,e.toString());
-            return "Failed to Parse Result";
+            return null;
         }
     }
 
     @Override
-    protected String doInBackground(Location... params) {
+    protected restaurant doInBackground(Location... params) {
         Log.d(LOG_TAG, "starting to fetch data in background");
-        getLocation();
-
-        //Catch the null case in order to prevent application crash
-        if(currentLocation == null){
-            return "Null location";
+        if(getLocation()) {
+            YelpAPI yelpRequest = new YelpAPI(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
+            String resultJSON = yelpRequest.searchForBusinessesByCoordinates
+                    ("food", currentLocation.getLatitude(), currentLocation.getLongitude());
+            return getDataFromJSON(resultJSON);
         }
+        //returning null signals error
+        return null;
 
-        YelpAPI yelpRequest = new YelpAPI(CONSUMER_KEY,CONSUMER_SECRET,TOKEN,TOKEN_SECRET);
-
-        String resultJSON = yelpRequest.searchForBusinessesByCoordinates
-                ("food",currentLocation.getLatitude(),currentLocation.getLongitude());
-
-        return getLocationDataFromJSON(resultJSON);
-
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        mTextView.setText(result);
     }
 
 }

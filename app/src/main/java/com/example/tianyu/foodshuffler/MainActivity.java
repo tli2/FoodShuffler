@@ -1,5 +1,6 @@
 package com.example.tianyu.foodshuffler;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -28,19 +29,11 @@ public class MainActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Obtain a reference to the TextView
-        textView = (TextView) findViewById(R.id.textView);
-
         //Programs the shuffle button to perform shuffle action
         Button shuffleAction = (Button) findViewById(R.id.shuffle_action);
-        shuffleAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //constructs a FetchRestaurantsTask instance and executes, gets back a JSON string
-                FetchRestaurantsTask mFetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(), textView);
-                mFetchRestaurantsTask.execute();
-            }
-
+        shuffleAction.setOnClickListener(v -> {
+            Intent detailIntent = new Intent(getApplicationContext(), DetailsActivity.class);
+            startActivity(detailIntent);
         });
     }
 

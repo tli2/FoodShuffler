@@ -12,6 +12,7 @@ public class restaurant{
     //fields
     public String name;
     public String location;
+    public String locationURI;
     public String mobileUrl;
     public String phone;
     public String[] category;
@@ -59,6 +60,19 @@ public class restaurant{
         }
     }
 
+    private String formatLocationURI(JSONObject location) throws JSONException {
+            String foo = location.getJSONArray("address").getString(0)
+                    + ", " + location.getJSONArray("city").getString(0)
+                    + ", " + location.getJSONObject("state_code").toString();
+            char[] foobar = foo.toCharArray();
+            for (int i =0; i < foobar.length; i++){
+                if(foobar[i] == ' '){
+                    foobar[i] = '+';
+                }
+            }
+            return new String(foobar);
+    }
+
     //takes in a JSONArray representing businesses around the area, and constructs a restaurant object from the business representing at index
     //Requires : businesses is not null and a JSONArray as specified in Yelp API, index is non-negative and within limit
     //Ensures : constructs a restaurant object with fields from the JSONArray and index
@@ -66,6 +80,7 @@ public class restaurant{
         JSONObject currentRestaurant = (JSONObject) businesses.get(index);
         name = currentRestaurant.getString(NAME);
         location = currentRestaurant.getJSONObject(LOCATION).getJSONArray(DISPLAY_ADDRESS).getString(0);
+        locationURI = formatLocationURI(currentRestaurant.getJSONObject(LOCATION));
         mobileUrl = currentRestaurant.getString(MOBILE_URL);
         phone = currentRestaurant.getString(PHONE);
         //notice here that category could be null, which signals an error in parsing
