@@ -28,3 +28,17 @@ After we've got the skeleton up and running we should work on preference setting
 2.Register to use the Yelp API
 
 Somehow we need to register in order to use the API. Haven't done it due to bad Internet. Should do it as soon as possible so we can get things working
+
+06/18/2015
+
+Basic functionality of app up and running. Testing required.
+
+To-Do:
+
+1. write production UI to replace the current version
+
+2. local data. Storing frequent locations and personal preferences for better offline capability.
+
+3. improved functionalities based on user choice and local storage.
+        
+        
