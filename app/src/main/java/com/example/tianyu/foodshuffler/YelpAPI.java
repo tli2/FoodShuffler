@@ -28,9 +28,10 @@ import org.scribe.oauth.OAuthService;
     public class YelpAPI {
 
         private static final String API_HOST = "api.yelp.com";
-        private static final String DEFAULT_TERM = "dinner";
+        private static final String DEFAULT_TERM = "food";
         private static final String DEFAULT_LOCATION = "Pittsburgh, PA";
         private static final int SEARCH_LIMIT = 10;
+        private static final int RADIUS_FILTER = 1000;
         private static final String SEARCH_PATH = "/v2/search";
         private static final String BUSINESS_PATH = "/v2/business";
 
@@ -84,6 +85,7 @@ import org.scribe.oauth.OAuthService;
             request.addQuerystringParameter("term", term);
             request.addQuerystringParameter("ll", latitude + "," + longitude);
             request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
+            request.addQuerystringParameter("radius_filter", String.valueOf(RADIUS_FILTER));
             return sendRequestAndGetResponse(request);
         }
 

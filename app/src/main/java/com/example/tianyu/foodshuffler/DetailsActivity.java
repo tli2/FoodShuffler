@@ -2,12 +2,13 @@ package com.example.tianyu.foodshuffler;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -30,6 +31,9 @@ public class DetailsActivity extends ActionBarActivity {
             return;
         }
         detailView.setText(result.description);
+
+        ImageView imageView = (ImageView) findViewById(R.id.detail_image);
+        imageView.setImageBitmap(result.image);
 
         Button mapButton = (Button) findViewById(R.id.mapAction);
         mapButton.setOnClickListener(new View.OnClickListener() {

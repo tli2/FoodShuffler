@@ -1,5 +1,7 @@
 package com.example.tianyu.foodshuffler;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,6 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -23,6 +27,7 @@ public class Restaurant implements Parcelable{
     public String[] category;
     public String description;
     public long distance;
+    public Bitmap image;
 
     //constants
     private final String NAME = "name";
@@ -32,6 +37,7 @@ public class Restaurant implements Parcelable{
     private final String PHONE = "phone";
     private final String CATEGORY = "categories";
     private final String DISTANCE = "distance";
+    private final String IMAGE_URL = "image_url";
 
     //Helper method to convert a JSONArray into a regular String array
     //Requires : targetArray format complies with Yelp API specification
@@ -80,6 +86,7 @@ public class Restaurant implements Parcelable{
 
     //takes in a JSONArray representing businesses around the area, and constructs a Restaurant object from the business representing at index
     //Requires : businesses is not null and a JSONArray as specified in Yelp API, index is non-negative and within limit
+    //           Never call this constructor from the UI thread as it contains code that fetches image from web.
     //Ensures : constructs a Restaurant object with fields from the JSONArray and index
     public Restaurant(JSONArray businesses, int index) throws JSONException {
         JSONObject currentRestaurant = (JSONObject) businesses.get(index);
@@ -94,6 +101,18 @@ public class Restaurant implements Parcelable{
         if (category != null) {
             description = name + "\n" + location + "\n" + formatCategories(category) + mobileUrl;
         }
+        image = fetchImagefromUrl(currentRestaurant.getString(IMAGE_URL));
+    }
+
+    private Bitmap fetchImagefromUrl(String imgUrl) {
+        try {
+            URL Url = new URL(imgUrl);
+            InputStream in = Url.openConnection().getInputStream();
+            return BitmapFactory.decodeStream(in);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Implements Parcelable in order for a Restaurant object to be passed through an intent
@@ -115,6 +134,7 @@ public class Restaurant implements Parcelable{
         data.add(description);
         out.writeStringList(data);
         out.writeLong(distance);
+        out.writeParcelable(image,0);
     }
 
     public static final Parcelable.Creator<Restaurant> CREATOR
@@ -138,5 +158,6 @@ public class Restaurant implements Parcelable{
         phone = data.get(4);
         description = data.get(5);
         distance = in.readLong();
+        image = in.readParcelable(null);
     }
 }

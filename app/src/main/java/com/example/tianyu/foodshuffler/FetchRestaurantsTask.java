@@ -34,8 +34,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     private static final String TOKEN = "lrCALM_TKCrOGdO5PnITGSAanxWKX4_3";
     private static final String TOKEN_SECRET = "-SNGmxMWnz6RTsuFbtLWmEfq3DA";
 
-    private static final String YELP_SEARCH_TERM = "restaurants";
-
+    private static final String YELP_SEARCH_TERM = "food";
 
 
     //Constructor
@@ -98,7 +97,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
         super.onPostExecute(restaurant);
         mProgressBar.setVisibility(View.INVISIBLE);
         if(restaurant == null) {
-            Toast toast = Toast.makeText(mContext,"Location Unavailable",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(mContext,"Restaurants Unavailable",Toast.LENGTH_LONG);
             toast.show();
         } else {
             mMainActivity.launchDetailsActivitywithRestaurant(restaurant);
