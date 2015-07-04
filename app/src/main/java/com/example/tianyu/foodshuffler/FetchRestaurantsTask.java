@@ -4,6 +4,9 @@ import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,6 +24,8 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
 
     private final Context mContext;
     private Location currentLocation;
+    private ProgressBar mProgressBar;
+    private MainActivity mMainActivity;
     private final String LOG_TAG = FetchRestaurantsTask.class.getSimpleName();
 
     // For Yelp API
@@ -33,9 +38,11 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
 
 
 
-    //Constructor, requires that LocationProvider be one of the two constants provided
-    public FetchRestaurantsTask(Context context) {
+    //Constructor
+    public FetchRestaurantsTask(Context context, ProgressBar pb, MainActivity mainActivity) {
         mContext = context;
+        mProgressBar = pb;
+        mMainActivity = mainActivity;
     }
 
     //Method returns true if successfully gotten location, false otherwise
@@ -82,7 +89,20 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
 
     @Override
     protected void onPreExecute() {
+        mProgressBar.setVisibility(View.VISIBLE);
         super.onPreExecute();
-
     }
+
+    @Override
+    protected void onPostExecute(Restaurant restaurant) {
+        super.onPostExecute(restaurant);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        if(restaurant == null) {
+            Toast toast = Toast.makeText(mContext,"Location Unavailable",Toast.LENGTH_LONG);
+            toast.show();
+        } else {
+            mMainActivity.launchDetailsActivitywithRestaurant(restaurant);
+        }
+    }
+
 }

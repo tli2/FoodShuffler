@@ -21,7 +21,9 @@ public class DetailsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         detailView = (TextView) findViewById(R.id.DetailView);
-        final Restaurant result = shuffle();
+
+        Intent callingIntent = getIntent();
+        final Restaurant result = callingIntent.getParcelableExtra("restaurant");
 
         if(result == null){
             detailView.setText("Error receiving data, please check Internet Connectivity");
@@ -96,15 +98,5 @@ public class DetailsActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private Restaurant shuffle(){
-        FetchRestaurantsTask mFetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext());
-        mFetchRestaurantsTask.execute();
-        try{
-            return mFetchRestaurantsTask.get();
-        } catch (Exception e){
-            return null;
-        }
     }
 }

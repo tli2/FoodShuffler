@@ -1,14 +1,19 @@
 package com.example.tianyu.foodshuffler;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
+
+import java.util.ArrayList;
 
 /**
  * Created by Tianyu on 5/27/2015.
  */
 /* data structure to hold the chosen Restaurant. Supports possible future features like Show In Map, Call, etc. */
-public class Restaurant {
+public class Restaurant implements Parcelable{
     //fields
     public String name;
     public String location;
@@ -89,5 +94,49 @@ public class Restaurant {
         if (category != null) {
             description = name + "\n" + location + "\n" + formatCategories(category) + mobileUrl;
         }
+    }
+
+    // Implements Parcelable in order for a Restaurant object to be passed through an intent
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeStringArray(category);
+        ArrayList<String> data = new ArrayList<>();
+        data.add(name);
+        data.add(location);
+        data.add(locationURI);
+        data.add(mobileUrl);
+        data.add(phone);
+        data.add(description);
+        out.writeStringList(data);
+        out.writeLong(distance);
+    }
+
+    public static final Parcelable.Creator<Restaurant> CREATOR
+            = new Parcelable.Creator<Restaurant>() {
+        public Restaurant createFromParcel(Parcel in) {
+            return new Restaurant(in);
+        }
+
+        public Restaurant[] newArray(int size) {
+            return new Restaurant[size];
+        }
+    };
+
+    private Restaurant(Parcel in) {
+        category = in.createStringArray();
+        ArrayList<String> data = in.createStringArrayList();
+        name = data.get(0);
+        location = data.get(1);
+        locationURI = data.get(2);
+        mobileUrl = data.get(3);
+        phone = data.get(4);
+        description = data.get(5);
+        distance = in.readLong();
     }
 }

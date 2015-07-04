@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
@@ -20,13 +21,15 @@ public class MainActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final ProgressBar pb = (ProgressBar) findViewById(R.id.main_progress_bar);
+        final MainActivity mainActivity = this;
         //Programs the shuffle button to perform shuffle action
         Button shuffleAction = (Button) findViewById(R.id.shuffle_action);
         shuffleAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent detailIntent = new Intent(getApplicationContext(), DetailsActivity.class);
-                startActivity(detailIntent);
+                FetchRestaurantsTask fetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),pb,mainActivity);
+                fetchRestaurantsTask.execute();
             }
         });
     }
@@ -78,4 +81,9 @@ public class MainActivity extends ActionBarActivity{
         super.onDestroy();
     }
 
+    public void launchDetailsActivitywithRestaurant(Restaurant restaurant) {
+        Intent detailIntent = new Intent(this, DetailsActivity.class);
+        detailIntent.putExtra("restaurant",restaurant);
+        this.startActivity(detailIntent);
+    }
 }
