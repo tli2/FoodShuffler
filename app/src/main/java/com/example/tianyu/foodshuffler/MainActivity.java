@@ -3,20 +3,11 @@ package com.example.tianyu.foodshuffler;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-
-import org.scribe.builder.api.GoogleApi;
-
-import static com.google.android.gms.common.api.GoogleApiClient.*;
 
 
 public class MainActivity extends ActionBarActivity{
@@ -31,9 +22,12 @@ public class MainActivity extends ActionBarActivity{
 
         //Programs the shuffle button to perform shuffle action
         Button shuffleAction = (Button) findViewById(R.id.shuffle_action);
-        shuffleAction.setOnClickListener(v -> {
-            Intent detailIntent = new Intent(getApplicationContext(), DetailsActivity.class);
-            startActivity(detailIntent);
+        shuffleAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent detailIntent = new Intent(getApplicationContext(), DetailsActivity.class);
+                startActivity(detailIntent);
+            }
         });
     }
 

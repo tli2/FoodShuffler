@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -13,14 +14,14 @@ import android.widget.TextView;
 public class DetailsActivity extends ActionBarActivity {
 
     private TextView detailView;
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String LOG_TAG = DetailsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         detailView = (TextView) findViewById(R.id.DetailView);
-        restaurant result = shuffle();
+        final Restaurant result = shuffle();
 
         if(result == null){
             detailView.setText("Error receiving data, please check Internet Connectivity");
@@ -29,39 +30,47 @@ public class DetailsActivity extends ActionBarActivity {
         detailView.setText(result.description);
 
         Button mapButton = (Button) findViewById(R.id.mapAction);
-        mapButton.setOnClickListener(v -> {
-            Uri geoLocation = Uri.parse("geo:0,0?q=" + result.locationURI);
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW);
-            mapIntent.setData(geoLocation);
-            if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                startActivity(mapIntent);
-            } else{
-                detailView.setText("Cannot detect map application");
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri geoLocation = Uri.parse("geo:0,0?q=" + result.locationURI);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW);
+                mapIntent.setData(geoLocation);
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                } else {
+                    detailView.setText("Cannot detect map application");
+                }
             }
-
         });
 
         Button callButton = (Button) findViewById(R.id.callAction);
-        callButton.setOnClickListener(v ->{
-            Uri callNumber = Uri.parse("tel:" + result.phone);
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
-            callIntent.setData(callNumber);
-            if (callIntent.resolveActivity(getPackageManager()) != null) {
-                startActivity(callIntent);
-            } else{
-                detailView.setText("Cannot detect phone application");
+        callButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri callNumber = Uri.parse("tel:" + result.phone);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(callNumber);
+                if (callIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(callIntent);
+                } else {
+                    detailView.setText("Cannot detect phone application");
+                }
             }
         });
 
         Button webButton = (Button) findViewById(R.id.webAction);
-        webButton.setOnClickListener(v ->{
-            Uri webUri = Uri.parse(result.mobileUrl);
-            Intent webIntent = new Intent(Intent.ACTION_VIEW);
-            webIntent.setData(webUri);
-            if (webIntent.resolveActivity(getPackageManager()) != null) {
-                startActivity(webIntent);
-            } else{
-                detailView.setText("Cannot detect browser app");
+        webButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri webUri = Uri.parse(result.mobileUrl);
+                Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                webIntent.setData(webUri);
+                if (webIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(webIntent);
+                } else {
+                    detailView.setText("Cannot detect browser app");
+                }
             }
         });
 
@@ -89,7 +98,7 @@ public class DetailsActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private restaurant shuffle(){
+    private Restaurant shuffle(){
         FetchRestaurantsTask mFetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext());
         mFetchRestaurantsTask.execute();
         try{

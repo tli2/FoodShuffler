@@ -7,8 +7,8 @@ import org.json.JSONArray;
 /**
  * Created by Tianyu on 5/27/2015.
  */
-/* data structure to hold the chosen restaurant. Supports possible future features like Show In Map, Call, etc. */
-public class restaurant{
+/* data structure to hold the chosen Restaurant. Supports possible future features like Show In Map, Call, etc. */
+public class Restaurant {
     //fields
     public String name;
     public String location;
@@ -62,8 +62,8 @@ public class restaurant{
 
     private String formatLocationURI(JSONObject location) throws JSONException {
             String foo = location.getJSONArray("address").getString(0)
-                    + ", " + location.getJSONArray("city").getString(0)
-                    + ", " + location.getJSONObject("state_code").toString();
+                    + ", " + location.getString("city")
+                    + ", " + location.getString("state_code");
             char[] foobar = foo.toCharArray();
             for (int i =0; i < foobar.length; i++){
                 if(foobar[i] == ' '){
@@ -73,10 +73,10 @@ public class restaurant{
             return new String(foobar);
     }
 
-    //takes in a JSONArray representing businesses around the area, and constructs a restaurant object from the business representing at index
+    //takes in a JSONArray representing businesses around the area, and constructs a Restaurant object from the business representing at index
     //Requires : businesses is not null and a JSONArray as specified in Yelp API, index is non-negative and within limit
-    //Ensures : constructs a restaurant object with fields from the JSONArray and index
-    public restaurant(JSONArray businesses, int index) throws JSONException {
+    //Ensures : constructs a Restaurant object with fields from the JSONArray and index
+    public Restaurant(JSONArray businesses, int index) throws JSONException {
         JSONObject currentRestaurant = (JSONObject) businesses.get(index);
         name = currentRestaurant.getString(NAME);
         location = currentRestaurant.getJSONObject(LOCATION).getJSONArray(DISPLAY_ADDRESS).getString(0);
