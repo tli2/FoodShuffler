@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yelp_consumerkey">[Yelp Consumer Key]</string>
+    <string name="yelp_consumersecret">[Yelp Consumer Secret]</string>
+    <string name="yelp_token">[Yelp Token]</string>
+    <string name="yelp_tokensecret">[Yelp Token Secret]</string>
+
+    <string name="google_maps_key">[Google Maps ApiKey]</string>
+</resources>

@@ -29,10 +29,10 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     private final String LOG_TAG = FetchRestaurantsTask.class.getSimpleName();
 
     // For Yelp API
-    private static final String CONSUMER_KEY = "u8W0S27Ife1UpZWRBCkYRw";
-    private static final String CONSUMER_SECRET = "ARQKZ0YrqkZIkYKQipuAz7WCIC8";
-    private static final String TOKEN = "lrCALM_TKCrOGdO5PnITGSAanxWKX4_3";
-    private static final String TOKEN_SECRET = "-SNGmxMWnz6RTsuFbtLWmEfq3DA";
+    private static String CONSUMER_KEY;
+    private static String CONSUMER_SECRET;
+    private static String TOKEN;
+    private static String TOKEN_SECRET;
 
     private static final String YELP_SEARCH_TERM = "food";
 
@@ -42,6 +42,11 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
         mContext = context;
         mProgressBar = pb;
         mMainActivity = mainActivity;
+
+        CONSUMER_KEY = mContext.getResources().getString(R.string.yelp_consumerkey);
+        CONSUMER_SECRET = mContext.getResources().getString(R.string.yelp_consumersecret);
+        TOKEN = mContext.getResources().getString(R.string.yelp_token);
+        TOKEN_SECRET = mContext.getResources().getString(R.string.yelp_tokensecret);
     }
 
     //Method returns true if successfully gotten location, false otherwise

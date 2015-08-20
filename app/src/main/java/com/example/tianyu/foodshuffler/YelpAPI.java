@@ -1,6 +1,5 @@
 package com.example.tianyu.foodshuffler;
 
-import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 import org.json.simple.JSONArray;
@@ -39,10 +38,10 @@ import org.scribe.oauth.OAuthService;
          * Update OAuth credentials below from the Yelp Developers API site:
          * http://www.yelp.com/developers/getting_started/api_access
          */
-        private static final String CONSUMER_KEY = "u8W0S27Ife1UpZWRBCkYRw";
-        private static final String CONSUMER_SECRET = "ARQKZ0YrqkZIkYKQipuAz7WCIC8";
-        private static final String TOKEN = "lrCALM_TKCrOGdO5PnITGSAanxWKX4_3";
-        private static final String TOKEN_SECRET = "-SNGmxMWnz6RTsuFbtLWmEfq3DA";
+//        private static final String CONSUMER_KEY;
+//        private static final String CONSUMER_SECRET;
+//        private static final String TOKEN;
+//        private static final String TOKEN_SECRET;
 
         OAuthService service;
         Token accessToken;
@@ -177,11 +176,11 @@ import org.scribe.oauth.OAuthService;
          * <p>
          * After entering your OAuth credentials, execute <tt><b>run.sh</b></tt> to run this example.
          */
-        public static void main(String[] args) {
-            YelpAPICLI yelpApiCli = new YelpAPICLI();
-            new JCommander(yelpApiCli, args);
-
-            YelpAPI yelpApi = new YelpAPI(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
-            queryAPI(yelpApi, yelpApiCli);
-        }
+//        public static void main(String[] args) {
+//            YelpAPICLI yelpApiCli = new YelpAPICLI();
+//            new JCommander(yelpApiCli, args);
+//
+//            YelpAPI yelpApi = new YelpAPI(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
+//            queryAPI(yelpApi, yelpApiCli);
+//        }
     }
