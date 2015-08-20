@@ -1,32 +1,47 @@
 package com.example.tianyu.foodshuffler;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Tianyu on 5/27/2015.
  */
 /* data structure to hold the chosen Restaurant. Supports possible future features like Show In Map, Call, etc. */
 public class Restaurant implements Parcelable{
+
+    private final String LOG_TAG = Restaurant.class.getSimpleName();
+
     //fields
     public String name;
-    public String location;
+    public String display_address;
     public String locationURI;
     public String mobileUrl;
     public String phone;
+    public String display_phone;
+    public String rating;
+    public int review_count;
     public String[] category;
     public String description;
-    public long distance;
+    public double distance;
+    public double latitude;
+    public double longitude;
     public Bitmap image;
 
     //constants
@@ -35,9 +50,75 @@ public class Restaurant implements Parcelable{
     private final String DISPLAY_ADDRESS = "display_address";
     private final String MOBILE_URL = "mobile_url";
     private final String PHONE = "phone";
+    private final String DISPLAY_PHONE = "display_phone";
+    private final String RATING = "rating";
+    private final String REVIEW_COUNT = "review_count";
     private final String CATEGORY = "categories";
     private final String DISTANCE = "distance";
+    private final String COORDINATE = "coordinate";
+    private final String LATITUDE = "latitude";
+    private final String LONGITUDE = "longitude";
     private final String IMAGE_URL = "image_url";
+
+    public String getCategories() {
+        return this.formatCategories(this.category);
+    }
+
+    public int getRatingImgId() {
+        switch (rating) {
+            case "1.0":
+                return R.drawable.yelp_stars_1;
+            case "1.5":
+                return R.drawable.yelp_stars_1half;
+            case "2.0":
+                return R.drawable.yelp_stars_2;
+            case "2.5":
+                return R.drawable.yelp_stars_2half;
+            case "3.0":
+                return R.drawable.yelp_stars_3;
+            case "3.5":
+                return R.drawable.yelp_stars_3half;
+            case "4.0":
+                return R.drawable.yelp_stars_4;
+            case "4.5":
+                return R.drawable.yelp_stars_4half;
+            case "5.0":
+                return R.drawable.yelp_stars_5;
+            default:
+                return R.drawable.yelp_stars_1;
+        }
+    }
+
+    public int getReviewCount() {
+        return review_count;
+    }
+
+    public boolean hasPhone() {
+        return display_phone != null;
+    }
+
+    public String getDisplayPhone() {
+        if(hasPhone()) {
+            return this.display_phone;
+        }
+        return "Unavailable";
+    }
+
+    public Address getCoordsFromGeocoder(Context context) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        List<Address> addressList;
+        try {
+            addressList = geocoder.getFromLocationName(this.locationURI, 1);
+            return addressList.get(0);
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "exception geocoding");
+            return null;
+        }
+    }
+
+    public String getPhone() {
+        return this.phone;
+    }
 
     //Helper method to convert a JSONArray into a regular String array
     //Requires : targetArray format complies with Yelp API specification
@@ -59,15 +140,15 @@ public class Restaurant implements Parcelable{
     //Ensures : outputs the current output format based on categories
     private String formatCategories(String[] categories){
         if (categories.length >= 3){
-            return (categories[0] + ", " + categories[1] + ", " + categories[2] + "\n");
+            return (categories[0] + ", " + categories[1] + ", " + categories[2]);
         }
 
         else if(categories.length == 2){
-            return (categories[0] + ", " + categories[1] + "\n");
+            return (categories[0] + ", " + categories[1]);
         }
 
         else{
-            return (categories[0] + "\n");
+            return (categories[0]);
         }
     }
 
@@ -91,15 +172,21 @@ public class Restaurant implements Parcelable{
     public Restaurant(JSONArray businesses, int index) throws JSONException {
         JSONObject currentRestaurant = (JSONObject) businesses.get(index);
         name = currentRestaurant.getString(NAME);
-        location = currentRestaurant.getJSONObject(LOCATION).getJSONArray(DISPLAY_ADDRESS).getString(0);
+        display_address = currentRestaurant.getJSONObject(LOCATION).getJSONArray(DISPLAY_ADDRESS).getString(0);
         locationURI = formatLocationURI(currentRestaurant.getJSONObject(LOCATION));
         mobileUrl = currentRestaurant.getString(MOBILE_URL);
         phone = currentRestaurant.getString(PHONE);
+        display_phone = currentRestaurant.getString(DISPLAY_PHONE);
+        rating = String.valueOf(currentRestaurant.getDouble(RATING));
+        review_count = currentRestaurant.getInt(REVIEW_COUNT);
         //notice here that category could be null, which signals an error in parsing
         category = fromJSONArray(currentRestaurant.getJSONArray(CATEGORY));
-        distance = currentRestaurant.getLong(DISTANCE);
+        distance = currentRestaurant.getDouble(DISTANCE);
+        JSONObject coordinate = currentRestaurant.getJSONObject(LOCATION).getJSONObject(COORDINATE);
+        latitude = coordinate.getDouble(LATITUDE);
+        longitude = coordinate.getDouble(LONGITUDE);
         if (category != null) {
-            description = name + "\n" + location + "\n" + formatCategories(category) + mobileUrl;
+            description = name + "\n" + display_address + "\n" + formatCategories(category) + mobileUrl;
         }
         image = fetchImagefromUrl(currentRestaurant.getString(IMAGE_URL));
     }
@@ -127,13 +214,17 @@ public class Restaurant implements Parcelable{
         out.writeStringArray(category);
         ArrayList<String> data = new ArrayList<>();
         data.add(name);
-        data.add(location);
+        data.add(display_address);
         data.add(locationURI);
         data.add(mobileUrl);
         data.add(phone);
+        data.add(display_phone);
+        data.add(rating);
         data.add(description);
         out.writeStringList(data);
-        out.writeLong(distance);
+        out.writeInt(review_count);
+        double doubles[] = {latitude,longitude,distance};
+        out.writeDoubleArray(doubles);
         out.writeParcelable(image,0);
     }
 
@@ -152,12 +243,18 @@ public class Restaurant implements Parcelable{
         category = in.createStringArray();
         ArrayList<String> data = in.createStringArrayList();
         name = data.get(0);
-        location = data.get(1);
+        display_address = data.get(1);
         locationURI = data.get(2);
         mobileUrl = data.get(3);
         phone = data.get(4);
-        description = data.get(5);
-        distance = in.readLong();
+        display_phone = data.get(5);
+        rating = data.get(6);
+        description = data.get(7);
+        review_count = in.readInt();
+        double doubles[] = in.createDoubleArray();
+        latitude = doubles[0];
+        longitude = doubles[1];
+        distance = doubles[2];
         image = in.readParcelable(null);
     }
 }

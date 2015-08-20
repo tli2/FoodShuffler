@@ -1,9 +1,24 @@
 <resources>
     <string name="app_name">FoodShuffler</string>
-    <string name="action_settings">Settings</string>
+
+    <!--MainActivity-->
+    <string name="action_filter">Filter</string>
+
+    <string name="preference_file_key">com.example.tianyu.foodshuffler</string>
+
+    <!--DetailsActivity-->
+    <string name="action_share">Share</string>
+    <string name="share_text">The FoodShuffler App chose \"%1$s\" for me!</string>
     <string name="title_activity_details">DetailsActivity</string>
 
-    <string name="detail_action_map">Show in Map</string>
-    <string name="detail_action_call">Call</string>
-    <string name="detail_action_web">Open in Web</string>
+    <string name="details_item_cuisine_2nd">Cuisine</string>
+    <plurals name="details_item_review_2nd">
+        <item quantity="zero">No reviews from Yelp</item>
+        <item quantity="one">1 review from Yelp</item>
+        <item quantity="other">%1$d reviews from Yelp</item>
+    </plurals>
+    <string name="details_item_phone_2nd">Phone</string>
+    <string name="details_item_map_2nd">%1$d meters away</string>
+    <string name="details_item_map_hint">Open in map</string>
+
 </resources>

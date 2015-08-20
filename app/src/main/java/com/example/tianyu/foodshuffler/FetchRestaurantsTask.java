@@ -20,8 +20,6 @@ import java.util.Random;
 /* AsyncTask to query the Yelp server about nearby restaurants*/
 public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant> {
 
-
-
     private final Context mContext;
     private Location currentLocation;
     private ProgressBar mProgressBar;
@@ -94,6 +92,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     @Override
     protected void onPreExecute() {
         mProgressBar.setVisibility(View.VISIBLE);
+
         super.onPreExecute();
     }
 
