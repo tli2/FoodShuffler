@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">FoodShuffler</string>
 
+    <!--Drawer-->
+    <string name="drawer_item_shuffle_title">Shuffle</string>
+    <string name="drawer_item_history_title">History</string>
+    <string name="drawer_item_settings_title">Settings</string>
+    <string name="drawer_item_about_title">About</string>
+
     <!--MainActivity-->
     <string name="action_filter">Filter</string>
 

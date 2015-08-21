@@ -9,6 +9,9 @@
     <style name="DetailsExpandedTitle" parent="android:TextAppearance.Large">
         <item name="android:textSize">32sp</item>
     </style>
-    <!--app:expandedTitleTextAppearance="@style/DetailsExpandedTitle"-->
+
+    <style name="DrawerHeaderTitle" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textSize">20sp</item>
+    </style>
 
 </resources>
