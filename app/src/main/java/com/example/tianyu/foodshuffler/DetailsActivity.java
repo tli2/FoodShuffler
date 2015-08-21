@@ -72,9 +72,15 @@ public class DetailsActivity extends AppCompatActivity implements OnMapReadyCall
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // First checks whether restaurant information comes with the intent.
+        // If so, fetch restaurant from here, otherwise get it from MainActivity.
         Intent callingIntent = getIntent();
-        final Restaurant result = callingIntent.getParcelableExtra("restaurant");
-        mResult = result;
+        if(callingIntent.hasExtra("restaurant")) {
+            mResult = callingIntent.getParcelableExtra("restaurant");
+        } else {
+            mResult = MainActivity.getChosenRestaurant();
+        }
+        final Restaurant result = mResult;
 
         final CollapsingToolbarLayout CTL = (CollapsingToolbarLayout) findViewById(R.id.details_collapsingToolbar);
         CTL.setTitle(result.name);

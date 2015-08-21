@@ -14,6 +14,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
+    private static Restaurant chosenRestaurant;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     protected void onCreate(Bundle savedInstanceState){
@@ -83,7 +84,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchDetailsActivitywithRestaurant(Restaurant restaurant) {
         Intent detailIntent = new Intent(this, DetailsActivity.class);
-        detailIntent.putExtra("restaurant",restaurant);
+        chosenRestaurant = restaurant;
         this.startActivity(detailIntent);
+    }
+
+    public static Restaurant getChosenRestaurant() {
+        return chosenRestaurant;
     }
 }

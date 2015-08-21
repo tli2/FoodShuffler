@@ -192,8 +192,10 @@ public class Restaurant implements Parcelable{
     }
 
     private Bitmap fetchImagefromUrl(String imgUrl) {
+        String regex = "\\/.{1,2}\\.jpg";
+        String newUrl = imgUrl.replaceAll(regex, "/o.jpg");
         try {
-            URL Url = new URL(imgUrl);
+            URL Url = new URL(newUrl);
             InputStream in = Url.openConnection().getInputStream();
             return BitmapFactory.decodeStream(in);
         } catch (Exception e) {
