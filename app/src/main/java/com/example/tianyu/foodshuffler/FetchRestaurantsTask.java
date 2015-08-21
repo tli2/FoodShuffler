@@ -3,6 +3,7 @@ package com.example.tianyu.foodshuffler;
 import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -23,6 +24,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     private final Context mContext;
     private Location currentLocation;
     private ProgressBar mProgressBar;
+    private FloatingActionButton mFab;
     private MainActivity mMainActivity;
     private final String LOG_TAG = FetchRestaurantsTask.class.getSimpleName();
 
@@ -36,9 +38,10 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
 
 
     //Constructor
-    public FetchRestaurantsTask(Context context, ProgressBar pb, MainActivity mainActivity) {
+    public FetchRestaurantsTask(Context context, MainActivity mainActivity) {
         mContext = context;
-        mProgressBar = pb;
+        mProgressBar = mainActivity.getProgressBar();
+        mFab = mainActivity.getShuffleFab();
         mMainActivity = mainActivity;
 
         CONSUMER_KEY = mContext.getResources().getString(R.string.yelp_consumerkey);
@@ -91,7 +94,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
 
     @Override
     protected void onPreExecute() {
-        mProgressBar.setVisibility(View.VISIBLE);
+        mFab.setVisibility(View.INVISIBLE);
 
         super.onPreExecute();
     }
@@ -99,7 +102,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     @Override
     protected void onPostExecute(Restaurant restaurant) {
         super.onPostExecute(restaurant);
-        mProgressBar.setVisibility(View.INVISIBLE);
+        mFab.setVisibility(View.VISIBLE);
         if(restaurant == null) {
             Toast toast = Toast.makeText(mContext,"Restaurants Unavailable",Toast.LENGTH_LONG);
             toast.show();

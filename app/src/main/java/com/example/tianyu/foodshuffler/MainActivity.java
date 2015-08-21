@@ -11,12 +11,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textView;
+    private ProgressBar mProgressBar;
+    private FloatingActionButton shuffleFab;
     private static Restaurant chosenRestaurant;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -36,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final ProgressBar pb = (ProgressBar) findViewById(R.id.main_progress_bar);
+        mProgressBar = (ProgressBar) findViewById(R.id.main_progress_bar);
         final MainActivity mainActivity = this;
         //Programs the shuffle button to perform shuffle action
-        FloatingActionButton shuffleFab = (FloatingActionButton) findViewById(R.id.shuffle_fab);
+        shuffleFab = (FloatingActionButton) findViewById(R.id.shuffle_fab);
         shuffleFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FetchRestaurantsTask fetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),pb,mainActivity);
+                FetchRestaurantsTask fetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),mainActivity);
                 fetchRestaurantsTask.execute();
             }
         });
@@ -104,5 +104,13 @@ public class MainActivity extends AppCompatActivity {
 
     public static Restaurant getChosenRestaurant() {
         return chosenRestaurant;
+    }
+
+    public ProgressBar getProgressBar() {
+        return mProgressBar;
+    }
+
+    public FloatingActionButton getShuffleFab() {
+        return shuffleFab;
     }
 }
