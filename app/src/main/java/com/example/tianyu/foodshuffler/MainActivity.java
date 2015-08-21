@@ -2,6 +2,7 @@ package com.example.tianyu.foodshuffler;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_menu_black_36dp);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_18dp);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         final ProgressBar pb = (ProgressBar) findViewById(R.id.main_progress_bar);
         final MainActivity mainActivity = this;
         //Programs the shuffle button to perform shuffle action
-        Button shuffleAction = (Button) findViewById(R.id.shuffle_action);
-        shuffleAction.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton shuffleFab = (FloatingActionButton) findViewById(R.id.shuffle_fab);
+        shuffleFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FetchRestaurantsTask fetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),pb,mainActivity);

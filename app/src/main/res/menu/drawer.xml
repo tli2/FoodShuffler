@@ -6,11 +6,11 @@
         <item
             android:id="@+id/drawer_item_shuffle"
             android:checked="true"
-            android:icon="@drawable/ic_local_dining_black_36dp"
+            android:icon="@drawable/ic_local_dining_white_24dp"
             android:title="@string/drawer_item_shuffle_title"/>
         <item
             android:id="@+id/drawer_item_history"
-            android:icon="@drawable/ic_history_black_36dp"
+            android:icon="@drawable/ic_history_white_24dp"
             android:title="@string/drawer_item_history_title"/>
     </group>
     <group
@@ -18,11 +18,11 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/drawer_item_settings"
-            android:icon="@drawable/ic_settings_black_36dp"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/drawer_item_settings_title"/>
         <item
             android:id="@+id/drawer_item_about"
-            android:icon="@drawable/ic_info_outline_black_36dp"
+            android:icon="@drawable/ic_info_outline_white_24dp"
             android:title="@string/drawer_item_about_title"/>
     </group>
 </menu>
