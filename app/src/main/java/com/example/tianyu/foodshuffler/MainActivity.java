@@ -1,6 +1,7 @@
 package com.example.tianyu.foodshuffler;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
@@ -10,7 +11,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -18,6 +23,15 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private FloatingActionButton shuffleFab;
     private static Restaurant chosenRestaurant;
+
+    private boolean cardVisible = false;
+    private FrameLayout cardFrame;
+    private ImageView cardImg;
+    private ImageView cardCircle;
+    private TextView cardTitle;
+    private TextView cardSubhead;
+    private Button cardButton;
+
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     protected void onCreate(Bundle savedInstanceState){
@@ -43,10 +57,19 @@ public class MainActivity extends AppCompatActivity {
         shuffleFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                shuffleFab.setVisibility(View.INVISIBLE);
+                hideRestaurantCard();
                 FetchRestaurantsTask fetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),mainActivity);
                 fetchRestaurantsTask.execute();
             }
         });
+
+        cardFrame = (FrameLayout) findViewById(R.id.main_restaurant_card_frame);
+        cardImg = (ImageView) findViewById(R.id.restaurant_card_image);
+        cardCircle = (ImageView) findViewById(R.id.restaurant_card_circle);
+        cardTitle = (TextView) findViewById(R.id.restaurant_card_title);
+        cardSubhead = (TextView) findViewById(R.id.restaurant_card_subhead);
+        cardButton = (Button) findViewById(R.id.restaurant_card_button);
     }
 
     @Override
@@ -94,6 +117,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void showRestaurantCard() {
+        cardFrame.setVisibility(View.VISIBLE);
+        cardVisible = true;
+    }
+
+    private void hideRestaurantCard() {
+        cardFrame.setVisibility(View.INVISIBLE);
+        cardVisible = false;
+    }
+
+    public void setRestaurantCard(final Restaurant restaurant) {
+        cardImg.setImageBitmap(restaurant.image);
+        if(restaurant.getPalette() != null) {
+            GradientDrawable circleDrawable = (GradientDrawable) cardCircle.getDrawable();
+            circleDrawable.setColor(restaurant.getPalette().getVibrantColor(getResources().getColor(R.color.primary_grey)));
+        }
+        cardTitle.setText(restaurant.name);
+        cardSubhead.setText(restaurant.getCategories());
+        cardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchDetailsActivitywithRestaurant(restaurant);
+            }
+        });
+        showRestaurantCard();
     }
 
     public void launchDetailsActivitywithRestaurant(Restaurant restaurant) {

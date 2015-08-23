@@ -94,8 +94,6 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
 
     @Override
     protected void onPreExecute() {
-        mFab.setVisibility(View.INVISIBLE);
-
         super.onPreExecute();
     }
 
@@ -107,7 +105,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
             Toast toast = Toast.makeText(mContext,"Restaurants Unavailable",Toast.LENGTH_LONG);
             toast.show();
         } else {
-            mMainActivity.launchDetailsActivitywithRestaurant(restaurant);
+            mMainActivity.setRestaurantCard(restaurant);
         }
     }
 

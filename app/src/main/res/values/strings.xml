@@ -9,8 +9,7 @@
 
     <!--MainActivity-->
     <string name="action_filter">Filter</string>
-
-    <string name="preference_file_key">com.example.tianyu.foodshuffler</string>
+    <string name="restaurant_card_button_text">LEARN MORE</string>
 
     <!--DetailsActivity-->
     <string name="action_share">Share</string>
