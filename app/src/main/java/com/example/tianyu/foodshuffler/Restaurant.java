@@ -7,6 +7,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -43,6 +44,7 @@ public class Restaurant implements Parcelable{
     public double latitude;
     public double longitude;
     public Bitmap image;
+    public Palette palette;
 
     //constants
     private final String NAME = "name";
@@ -120,6 +122,13 @@ public class Restaurant implements Parcelable{
         return this.phone;
     }
 
+    public Palette getPalette() {
+        if (palette == null) {
+            Log.d(LOG_TAG, "returning null Palette...");
+        }
+        return this.palette;
+    }
+
     //Helper method to convert a JSONArray into a regular String array
     //Requires : targetArray format complies with Yelp API specification
     //Ensures : returns an array with the category information identical with the JSONArray
@@ -165,6 +174,10 @@ public class Restaurant implements Parcelable{
             return new String(foobar);
     }
 
+    private void preparePalette(Bitmap bitmap) {
+        this.palette = Palette.from(bitmap).generate();
+    }
+
     //takes in a JSONArray representing businesses around the area, and constructs a Restaurant object from the business representing at index
     //Requires : businesses is not null and a JSONArray as specified in Yelp API, index is non-negative and within limit
     //           Never call this constructor from the UI thread as it contains code that fetches image from web.
@@ -197,7 +210,9 @@ public class Restaurant implements Parcelable{
         try {
             URL Url = new URL(newUrl);
             InputStream in = Url.openConnection().getInputStream();
-            return BitmapFactory.decodeStream(in);
+            Bitmap result =  BitmapFactory.decodeStream(in);
+            preparePalette(result);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
         }

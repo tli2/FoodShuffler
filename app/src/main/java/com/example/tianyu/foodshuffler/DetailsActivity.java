@@ -85,13 +85,9 @@ public class DetailsActivity extends AppCompatActivity implements OnMapReadyCall
         final CollapsingToolbarLayout CTL = (CollapsingToolbarLayout) findViewById(R.id.details_collapsingToolbar);
         CTL.setTitle(result.name);
 
-        Palette.generateAsync(result.image, new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                CTL.setContentScrimColor(palette.getVibrantColor(R.attr.colorPrimary));
-                CTL.setStatusBarScrimColor(palette.getDarkVibrantColor(R.attr.colorPrimaryDark));
-            }
-        });
+        Palette palette = result.getPalette();
+        CTL.setContentScrimColor(palette.getVibrantColor(getResources().getColor(R.color.primary_red)));
+        CTL.setStatusBarScrimColor(palette.getVibrantColor(getResources().getColor(R.color.primary_red)));
 
         ImageView imageView = (ImageView) findViewById(R.id.details_backdropImg);
         imageView.setImageBitmap(result.image);
