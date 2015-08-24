@@ -79,7 +79,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerCrop"
+                        android:transitionName="@string/restaurant_card_img_transition_name"/>
                     <Button
                         android:id="@+id/restaurant_card_button"
                         style="?android:attr/borderlessButtonStyle"

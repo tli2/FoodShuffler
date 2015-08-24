@@ -26,4 +26,7 @@
     <string name="details_item_map_2nd">%1$d meters away</string>
     <string name="details_item_map_hint">Open in map</string>
 
+    <!-- Transitions -->
+    <string name="restaurant_card_img_transition_name">RestaurantImgTransition</string>
+
 </resources>

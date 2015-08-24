@@ -6,5 +6,11 @@
         <item name="android:colorPrimary">#F34235</item>
         <item name="android:colorPrimaryDark">#F34235</item>
         <item name="android:windowTranslucentStatus">true</item>
+
+        <!-- enable window content transitions -->
+        <item name="android:windowContentTransitions">true</item>
+        <!-- specify shared element transitions -->
+        <item name="android:windowSharedElementEnterTransition">@transition/restaurant_card_transition</item>
+        <item name="android:windowSharedElementExitTransition">@transition/restaurant_card_transition</item>
     </style>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.tianyu.foodshuffler;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static Restaurant chosenRestaurant;
 
     private boolean cardVisible = false;
+    private CardView card;
     private FrameLayout cardFrame;
     private ImageView cardImg;
     private ImageView cardCircle;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        card = (CardView) findViewById(R.id.main_restaurant_card);
         cardFrame = (FrameLayout) findViewById(R.id.main_restaurant_card_frame);
         cardImg = (ImageView) findViewById(R.id.restaurant_card_image);
         cardCircle = (ImageView) findViewById(R.id.restaurant_card_circle);
@@ -149,7 +153,12 @@ public class MainActivity extends AppCompatActivity {
     public void launchDetailsActivitywithRestaurant(Restaurant restaurant) {
         Intent detailIntent = new Intent(this, DetailsActivity.class);
         chosenRestaurant = restaurant;
-        this.startActivity(detailIntent);
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, cardImg, getResources().getString(R.string.restaurant_card_img_transition_name));
+            this.startActivity(detailIntent, options.toBundle());
+        } else {
+            this.startActivity(detailIntent);
+        }
     }
 
     public static Restaurant getChosenRestaurant() {
