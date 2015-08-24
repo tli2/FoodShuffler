@@ -71,6 +71,7 @@ public class DetailsActivity extends AppCompatActivity implements OnMapReadyCall
         Toolbar toolbar = (Toolbar) findViewById(R.id.details_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_18dp);
 
         // First checks whether restaurant information comes with the intent.
         // If so, fetch restaurant from here, otherwise get it from MainActivity.
