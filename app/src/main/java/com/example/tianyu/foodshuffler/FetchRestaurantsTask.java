@@ -26,6 +26,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     private ProgressBar mProgressBar;
     private FloatingActionButton mFab;
     private MainActivity mMainActivity;
+    private static Random random = new Random();
     private final String LOG_TAG = FetchRestaurantsTask.class.getSimpleName();
 
     // For Yelp API
@@ -68,7 +69,7 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
             Log.d(LOG_TAG,"Begin parsing resultString");
             JSONObject fetchResult = new JSONObject(locationDataJSON);
             JSONArray businesses = fetchResult.getJSONArray("businesses");
-            int index = (new Random()).nextInt(businesses.length());
+            int index = random.nextInt(businesses.length());
             Restaurant result = new Restaurant(businesses,index);
             Log.d(LOG_TAG,"Done parsing resultString");
             return result;
