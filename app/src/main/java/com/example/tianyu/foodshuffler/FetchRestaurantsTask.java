@@ -101,7 +101,8 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     @Override
     protected void onPostExecute(Restaurant restaurant) {
         super.onPostExecute(restaurant);
-        mFab.setVisibility(View.VISIBLE);
+        mMainActivity.showShuffleFab();
+        mProgressBar.setVisibility(View.INVISIBLE);
         if(restaurant == null) {
             Toast toast = Toast.makeText(mContext,"Restaurants Unavailable",Toast.LENGTH_LONG);
             toast.show();

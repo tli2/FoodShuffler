@@ -1,5 +1,7 @@
 package com.example.tianyu.foodshuffler;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
@@ -60,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
         shuffleFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shuffleFab.setVisibility(View.INVISIBLE);
+                hideShuffleFab();
+                mProgressBar.setVisibility(View.VISIBLE);
                 hideRestaurantCard();
                 FetchRestaurantsTask fetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),mainActivity);
                 fetchRestaurantsTask.execute();
@@ -131,6 +134,18 @@ public class MainActivity extends AppCompatActivity {
     private void hideRestaurantCard() {
         cardFrame.setVisibility(View.INVISIBLE);
         cardVisible = false;
+    }
+
+   public void hideShuffleFab() {
+        AnimatorSet hideShuffleFabAnimatorSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.hide_shuffle_fab_animator);
+        hideShuffleFabAnimatorSet.setTarget(shuffleFab);
+        hideShuffleFabAnimatorSet.start();
+    }
+
+    public void showShuffleFab() {
+        AnimatorSet showShuffleFabAnimatorSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.show_shuffle_fab_animator);
+        showShuffleFabAnimatorSet.setTarget(shuffleFab);
+        showShuffleFabAnimatorSet.start();
     }
 
     public void setRestaurantCard(final Restaurant restaurant) {
