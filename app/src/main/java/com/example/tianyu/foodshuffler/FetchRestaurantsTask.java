@@ -3,10 +3,7 @@ package com.example.tianyu.foodshuffler;
 import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -23,8 +20,6 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
 
     private final Context mContext;
     private Location currentLocation;
-    private ProgressBar mProgressBar;
-    private FloatingActionButton mFab;
     private MainActivity mMainActivity;
     private static Random random = new Random();
     private final String LOG_TAG = FetchRestaurantsTask.class.getSimpleName();
@@ -41,8 +36,6 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     //Constructor
     public FetchRestaurantsTask(Context context, MainActivity mainActivity) {
         mContext = context;
-        mProgressBar = mainActivity.getProgressBar();
-        mFab = mainActivity.getShuffleFab();
         mMainActivity = mainActivity;
 
         CONSUMER_KEY = mContext.getResources().getString(R.string.yelp_consumerkey);
@@ -102,7 +95,6 @@ public class FetchRestaurantsTask extends AsyncTask<Location, String, Restaurant
     protected void onPostExecute(Restaurant restaurant) {
         super.onPostExecute(restaurant);
         mMainActivity.showShuffleFab();
-        mProgressBar.setVisibility(View.INVISIBLE);
         if(restaurant == null) {
             Toast toast = Toast.makeText(mContext,"Restaurants Unavailable",Toast.LENGTH_LONG);
             toast.show();

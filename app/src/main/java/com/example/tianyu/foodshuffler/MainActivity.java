@@ -1,20 +1,26 @@
 package com.example.tianyu.foodshuffler;
 
+import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -28,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton shuffleFab;
     private static Restaurant chosenRestaurant;
 
-    private boolean cardVisible = false;
     private CardView card;
     private FrameLayout cardFrame;
     private ImageView cardImg;
@@ -36,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView cardTitle;
     private TextView cardSubhead;
     private Button cardButton;
+    private int cardFrameWidth;
+    private int cardFrameHeight;
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -63,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 hideShuffleFab();
-                mProgressBar.setVisibility(View.VISIBLE);
                 hideRestaurantCard();
                 FetchRestaurantsTask fetchRestaurantsTask = new FetchRestaurantsTask(getApplicationContext(),mainActivity);
                 fetchRestaurantsTask.execute();
@@ -77,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         cardTitle = (TextView) findViewById(R.id.restaurant_card_title);
         cardSubhead = (TextView) findViewById(R.id.restaurant_card_subhead);
         cardButton = (Button) findViewById(R.id.restaurant_card_button);
+
+        calculateAnimationValues();
     }
 
     @Override
@@ -126,25 +134,90 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    private void calculateAnimationValues() {
+        ViewTreeObserver viewTreeObserver = cardFrame.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (android.os.Build.VERSION.SDK_INT < 16) {
+                        cardFrame.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    } else {
+                        cardFrame.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                    cardFrameWidth = cardFrame.getWidth();
+                    cardFrameHeight = cardFrame.getHeight();
+                    Log.d(LOG_TAG, "Card Dimensions:: width: " + cardFrameWidth + ", height: " + cardFrameHeight);
+                }
+            });
+        }
+    }
+
     private void showRestaurantCard() {
         cardFrame.setVisibility(View.VISIBLE);
-        cardVisible = true;
+
+        ObjectAnimator showCardTranslate = ObjectAnimator.ofFloat(cardFrame, "x", (float) -cardFrameWidth, 0);
+        showCardTranslate.setDuration(300);
+        showCardTranslate.setInterpolator(new LinearOutSlowInInterpolator());
+        showCardTranslate.start();
     }
 
     private void hideRestaurantCard() {
-        cardFrame.setVisibility(View.INVISIBLE);
-        cardVisible = false;
+        ObjectAnimator hideCardTranslate = ObjectAnimator.ofFloat(cardFrame, "x", 0, (float) cardFrameWidth);
+        hideCardTranslate.setDuration(300);
+        hideCardTranslate.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                cardFrame.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        hideCardTranslate.setInterpolator(new FastOutLinearInInterpolator());
+        hideCardTranslate.start();
     }
 
    public void hideShuffleFab() {
         AnimatorSet hideShuffleFabAnimatorSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.hide_shuffle_fab_animator);
         hideShuffleFabAnimatorSet.setTarget(shuffleFab);
         hideShuffleFabAnimatorSet.start();
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     public void showShuffleFab() {
         AnimatorSet showShuffleFabAnimatorSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.show_shuffle_fab_animator);
         showShuffleFabAnimatorSet.setTarget(shuffleFab);
+        showShuffleFabAnimatorSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
         showShuffleFabAnimatorSet.start();
     }
 
