@@ -3,4 +3,6 @@
     <color name="primary_grey">#747474</color>
     <color name="primary_red">#F34235</color>
     <color name="white">#FFFFFF</color>
+    <color name="building_grey">#606060</color>
+    <color name="main_background">#FAFAFA</color>
 </resources>
